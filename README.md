@@ -1,68 +1,192 @@
-# Proje Adı: LACQ
+# 💅 Lacq — Nail & Beauty Studio Platform
 
-## 1. Proje Vizyonu
-Bu proje, tekil veya zincir tırnak stüdyoları için geliştirilen; müşteri ile uzmanı buluşturan, sadece randevu değil, işlem öncesi **tırnak sağlığı analizi** ve **fiyatlandırma** süreçlerini dijitalleştiren bir mobil uygulamadır.
+> A mobile platform connecting nail studios with clients — digitizing appointments, nail health assessments, and pricing workflows.
 
-## 2. Teknoloji Yığını (Tech Stack)
-* **Frontend (Mobil):** React Native (CLI), TypeScript.
-* **Backend (API):** .NET 8 Web API (C#).
-* **Veritabanı:** PostgreSQL veya MS SQL Server (Entity Framework Core).
-* **Real-Time İletişim:** SignalR (Sohbet ve Bildirimler için).
-* **Dosya Depolama:** Azure Blob Storage veya AWS S3 (Fotoğraflar için).
-* **State Management:** Zustand veya Redux Toolkit.
-* **UI Library:** React Native Paper veya Tamagui.
+---
 
-## 3. Kullanıcı Rolleri
-1.  **Müşteri (Client):** Randevu alan, model yükleyen, hizmet alan.
-2.  **Uzman (Nail Technician):** İşlemi yapan, portfolyo yöneten, fiyat revizesi yapan.
-3.  **Admin (Salon Manager):** Genel raporlama, personel ve temel hizmet yönetimi.
+## 🌟 Vision
 
-## 4. Fonksiyonel Gereksinimler (Detaylı Akış)
+Lacq is a professional nail studio management and booking application built for the Turkish market. It goes beyond simple appointment scheduling by introducing a **nail health assessment flow** and a **dynamic pricing system** — where specialists can review a client's current nail condition and adjust pricing before confirming the appointment.
 
-### A. Randevu ve Fiyatlandırma Akışı (En Kritik Bölüm)
-1.  **Hizmet Seçimi:** Müşteri temel hizmeti seçer (Örn: Protez Tırnak, Kalıcı Oje). Sistem "Baz Fiyat" gösterir.
-2.  **İstenen Model (Inspiration):** Müşteri yaptırmak istediği tırnağın fotoğrafını yükler.
-3.  **Mevcut Durum (Assessment):**
-    * Müşteri kendi elinin/tırnağının güncel fotoğrafını çeker ve yükler.
-    * Sistem bu aşamada müşteriye "Tahmini bir fiyat aralığı" sunar ancak **"Kesin fiyat uzman onayından sonra belirlenecektir"** uyarısını verir.
-4.  **Uzman Değerlendirmesi:**
-    * Uzman, gelen randevu isteğini ve müşterinin tırnak fotoğrafını panelinde görür.
-    * Eğer tırnakta hasar, mantar riski veya ekstra işçilik (çıkarma işlemi vb.) varsa randevuya **"Ekstra Ücret / Hasar Payı"** ekler.
-    * Müşteriye bildirim gider: "Uzmanınız tırnak durumunuzu inceledi, güncel fiyat teklifi: X TL."
-    * Müşteri onaylarsa randevu kesinleşir.
+---
 
-### B. Uzman Seçimi ve Profiller
-* **Uzman Listeleme:** Müşteriler salonun uzmanlarını görüntüleyebilir.
-* **Portfolyo:** Her uzmanın kendi profili altında "Yaptığım İşler" galerisi bulunur.
-* **Müsaitlik:** Uzmanın çalışma saatleri ve dolu olduğu zamanlar takvimde görünür.
+## 🛠 Tech Stack
 
-### C. İletişim ve Süreç Yönetimi
-* **Anlık Sohbet (Chat):**
-    * Randevu kesinleşince Müşteri ve Uzman arasında özel bir sohbet penceresi açılır (SignalR ile).
-    * Fotoğraf ve metin gönderilebilir.
-* **Geç Kalma Bildirimi:**
-    * Müşteri randevusuna geç kalacaksa uygulama üzerinden "10 dk Gecikiyorum", "15 dk Gecikiyorum" butonlarına basabilir.
-    * Uzmanın ekranına ve telefonuna anında Push Notification düşer.
+| Layer | Technology |
+|-------|-----------|
+| Mobile Frontend | React Native (CLI) + TypeScript |
+| Backend API | .NET 8 Web API (C#) |
+| Database | PostgreSQL (Entity Framework Core) |
+| Real-Time | SignalR (Chat & Notifications) |
+| File Storage | Azure Blob Storage / AWS S3 |
+| State Management | Zustand |
+| Architecture | Clean Architecture (Domain / Application / Infrastructure / API) |
 
-### D. Uzman Paneli (CRM Özellikleri)
-* **Müşteri Kartı:** Uzman, randevuya gelen müşterinin profiline tıkladığında şunları görmelidir:
-    * Daha önce yaptırdığı işlemler.
-    * Yüklediği tırnak fotoğrafları.
-    * **Özel Notlar:** (Örn: "Müşterinin tırnak etleri çok hassas", "Sessizliği seviyor", "Kırmızı rengi tercih ediyor"). Bu notları sadece uzman görür.
+---
 
-## 5. Veritabanı Varlık İlişkileri (Entity Draft)
+## 👥 User Roles
 
-* **Users:** (Id, Name, Role, Phone, ProfileImage)
-* **Specialists:** (Id, UserId, Bio, YearsOfExperience) -> *User tablosu ile ilişkili*
-* **SpecialistPortfolio:** (Id, SpecialistId, ImageUrl, Description)
-* **Services:** (Id, Name, BasePrice, EstimatedDuration)
-* **Appointments:** (Id, ClientId, SpecialistId, ServiceId, AppointmentDate, Status [Pending, Approved, Completed, Cancelled], FinalPrice)
-* **AppointmentMedia:** (Id, AppointmentId, Type [TargetLook, CurrentCondition], ImageUrl)
-* **ChatMessages:** (Id, SenderId, ReceiverId, MessageContent, SentAt, IsRead)
-* **CustomerNotes:** (Id, SpecialistId, CustomerId, NoteContent) -> *Gizli notlar*
+| Role | Description |
+|------|-------------|
+| **Client** | Books appointments, uploads nail inspiration photos, tracks appointment history |
+| **Nail Technician (Specialist)** | Manages portfolio, reviews client nail conditions, adjusts pricing, chats with clients |
+| **Admin (Salon Manager)** | Manages staff, services, and views reports |
 
-## 6. Claude İçin Geliştirme Talimatları
-1.  **API First:** Önce Backend modellerini ve Controller'larını oluştur.
-2.  **SignalR Hub:** Chat ve Bildirimler için ayrı bir Hub tasarla.
-3.  **Image Upload:** Fotoğraf yükleme işlemleri için bir "FileService" arayüzü (Interface) yaz (Mock olarak başlayabiliriz).
-4.  **UI Components:** React Native tarafında "ImagePicker" ve "ChatBubble" bileşenlerini modüler tasarla.
+---
+
+## ✨ Key Features
+
+### 📅 Appointment & Pricing Flow
+1. Client selects a service → system shows **base price**
+2. Client uploads **inspiration photo** (target look)
+3. Client uploads **current nail condition photo**
+4. System shows **estimated price range** with disclaimer
+5. Specialist reviews photos and optionally adds **extra charge** (damage, removal, etc.)
+6. Client receives notification with updated price → **confirms or cancels**
+7. Appointment is finalized
+
+### 👩‍🎨 Specialist Profiles
+- Portfolio gallery ("My Work")
+- Availability calendar
+- Years of experience & bio
+
+### 💬 Real-Time Chat (SignalR)
+- Private chat opens between client and specialist after appointment confirmation
+- Supports text and image messages
+- Late arrival notifications ("I'm 10 min late" / "I'm 15 min late")
+
+### 📋 Specialist CRM Panel
+- Full client history per specialist
+- Uploaded nail photos per client
+- **Private notes** visible only to the specialist (e.g. "sensitive nail beds", "prefers red tones")
+
+---
+
+## 🗄 Database Schema
+```
+Users               — Base user accounts (all roles)
+Specialists         — Extended profile for nail technicians
+SpecialistPortfolio — Portfolio images per specialist
+Services            — Available services with base price & duration
+Appointments        — Core booking entity with status & pricing
+AppointmentMedia    — Target look & current condition photos
+ChatMessages        — Real-time messages per appointment
+CustomerNotes       — Private specialist notes per client
+```
+
+### Appointment Status Flow
+```
+Pending → PriceUpdated → Approved → Completed
+                    ↘ Cancelled
+```
+
+---
+
+## 🏗 Project Structure
+```
+LACQ/
+├── README.md
+├── .gitignore
+└── backend/
+    ├── Lacq.sln
+    ├── Lacq.Domain/
+    │   ├── Entities/
+    │   │   ├── BaseEntity.cs
+    │   │   ├── User.cs
+    │   │   ├── Specialist.cs
+    │   │   ├── SpecialistPortfolio.cs
+    │   │   ├── Service.cs
+    │   │   ├── Appointment.cs
+    │   │   ├── AppointmentMedia.cs
+    │   │   ├── ChatMessage.cs
+    │   │   └── CustomerNote.cs
+    │   └── Enums/
+    │       ├── UserRole.cs
+    │       ├── AppointmentStatus.cs
+    │       └── MediaType.cs
+    ├── Lacq.Application/
+    ├── Lacq.Infrastructure/
+    │   └── Persistence/
+    │       ├── ApplicationDbContext.cs
+    │       └── Configurations/
+    └── Lacq.API/
+        ├── Program.cs
+        └── appsettings.json
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- [.NET 8 SDK](https://dotnet.microsoft.com/download)
+- [Node.js v20+](https://nodejs.org)
+- [PostgreSQL 14+](https://www.postgresql.org)
+- [React Native CLI](https://reactnative.dev/docs/environment-setup)
+
+### Backend Setup
+```bash
+# Clone the repository
+git clone https://github.com/ecekabasakal/LACQ.git
+cd LACQ/backend
+
+# Create the database
+psql postgres -c "CREATE DATABASE lacqdb;"
+
+# Update connection string in Lacq.API/appsettings.json
+# "DefaultConnection": "Host=localhost;Database=lacqdb;Username=YOUR_USERNAME;Password="
+
+# Restore packages and build
+dotnet restore
+dotnet build
+
+# Run migrations
+dotnet ef database update --project Lacq.Infrastructure --startup-project Lacq.API
+
+# Run the API
+dotnet run --project Lacq.API
+```
+
+### API Documentation
+Once running, Swagger UI is available at:
+```
+https://localhost:5001/swagger
+```
+
+---
+
+## 🎨 Design System — Lumière
+
+Lacq uses the **Lumière** design language — a soft luxury aesthetic built for the beauty industry.
+
+| Token | Value |
+|-------|-------|
+| Primary Color | `#c9956a` (Terracotta) |
+| Background | `#faf6f1` (Warm Cream) |
+| Text | `#2a1f1a` (Espresso) |
+| Display Font | Cormorant Garamond (Italic) |
+| Body Font | DM Sans |
+
+---
+
+## 🗺 Development Roadmap
+
+- [x] Backend solution structure (Clean Architecture)
+- [x] Domain entities & enums
+- [x] ApplicationDbContext (EF Core + PostgreSQL)
+- [ ] EF Core migrations
+- [ ] JWT Authentication (Register / Login)
+- [ ] Appointment booking API
+- [ ] File upload service (S3/Azure Blob)
+- [ ] SignalR chat hub
+- [ ] React Native project setup
+- [ ] UI component library (Lumière Design System)
+- [ ] Booking flow screens
+- [ ] Specialist panel screens
+- [ ] Push notifications (Firebase)
+
+---
+
+## 📄 License
+
+This project is proprietary software. All rights reserved © 2025 Lacq.
