@@ -83,7 +83,7 @@ Pending → PriceUpdated → Approved → Completed
 ---
 
 ## 🏗 Project Structure
-```
+
 LACQ/
 ├── README.md
 ├── .gitignore
