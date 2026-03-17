@@ -1,3 +1,5 @@
+using Lacq.Domain.Enums;
+
 namespace Lacq.Domain.Entities;
 
 public class User : BaseEntity
@@ -8,6 +10,7 @@ public class User : BaseEntity
     public string? PhoneNumber { get; set; }
     public string? ProfileImageUrl { get; set; }
     public bool IsActive { get; set; } = true;
+    public UserRole Role { get; set; } = UserRole.Customer;
 
     // Navigation properties
     public Specialist? Specialist { get; set; }
