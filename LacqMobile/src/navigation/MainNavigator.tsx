@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Colors, Typography } from '../theme/tokens';
 import { MainTabParamList } from './types';
 import { View, Text } from 'react-native';
+import { HomeScreen } from '../screens/main/HomeScreen';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
@@ -32,7 +33,7 @@ export const MainNavigator = () => {
         },
       }}
     >
-      <Tab.Screen name="Home" component={PlaceholderScreen('Ana Sayfa')} options={{ title: 'Ana Sayfa' }} />
+      <Tab.Screen name="Home" component={HomeScreen} options={{ title: 'Ana Sayfa' }} />
       <Tab.Screen name="Appointments" component={PlaceholderScreen('Randevularım')} options={{ title: 'Randevularım' }} />
       <Tab.Screen name="Discover" component={PlaceholderScreen('Keşfet')} options={{ title: 'Keşfet' }} />
       <Tab.Screen name="Profile" component={PlaceholderScreen('Profil')} options={{ title: 'Profil' }} />
