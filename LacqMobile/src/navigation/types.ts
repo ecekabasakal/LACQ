@@ -3,6 +3,7 @@ export type RootStackParamList = {
   Register: undefined;
   ForgotPassword: undefined;
   MainTabs: undefined;
+  SpecialistDetail: { specialistId: string };
 };
 
 export type MainTabParamList = {
