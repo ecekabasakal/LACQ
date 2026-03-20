@@ -1,4 +1,5 @@
 import React from 'react';
+import { ProfileScreen } from '../screens/main/ProfileScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors, Typography } from '../theme/tokens';
@@ -65,13 +66,13 @@ export const MainNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Profile"
-        component={PlaceholderScreen('Profil')}
-        options={{
-          title: 'Profil',
-          tabBarIcon: ({ focused }) => <TabIcon icon="👤" focused={focused} />,
-        }}
-      />
+  name="Profile"
+  component={ProfileScreen}
+  options={{
+    title: 'Profil',
+    tabBarIcon: ({ focused }) => <TabIcon icon="👤" focused={focused} />,
+  }}
+/>
     </Tab.Navigator>
   );
 };
