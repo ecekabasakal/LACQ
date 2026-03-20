@@ -1,19 +1,14 @@
 import React from 'react';
+import { AppointmentsScreen } from '../screens/main/AppointmentsScreen';
 import { ProfileScreen } from '../screens/main/ProfileScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, Text, StyleSheet } from 'react-native';
 import { Colors, Typography } from '../theme/tokens';
+import { Text } from 'react-native';
 import { MainTabParamList } from './types';
 import { HomeScreen } from '../screens/main/HomeScreen';
 import { DiscoverScreen } from '../screens/main/DiscoverScreen';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
-
-const PlaceholderScreen = (name: string) => () => (
-  <View style={styles.placeholder}>
-    <Text style={styles.placeholderText}>{name}</Text>
-  </View>
-);
 
 const TabIcon = ({ icon, focused }: { icon: string; focused: boolean }) => (
   <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.4 }}>{icon}</Text>
@@ -51,7 +46,7 @@ export const MainNavigator = () => {
       />
       <Tab.Screen
         name="Appointments"
-        component={PlaceholderScreen('Randevularım')}
+        component={AppointmentsScreen}
         options={{
           title: 'Randevularım',
           tabBarIcon: ({ focused }) => <TabIcon icon="📅" focused={focused} />,
@@ -66,26 +61,14 @@ export const MainNavigator = () => {
         }}
       />
       <Tab.Screen
-  name="Profile"
-  component={ProfileScreen}
-  options={{
-    title: 'Profil',
-    tabBarIcon: ({ focused }) => <TabIcon icon="👤" focused={focused} />,
-  }}
-/>
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          title: 'Profil',
+          tabBarIcon: ({ focused }) => <TabIcon icon="👤" focused={focused} />,
+        }}
+      />
     </Tab.Navigator>
   );
 };
 
-const styles = StyleSheet.create({
-  placeholder: {
-    flex: 1,
-    backgroundColor: Colors.background,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  placeholderText: {
-    fontFamily: Typography.fontBody,
-    color: Colors.textPrimary,
-  },
-});
