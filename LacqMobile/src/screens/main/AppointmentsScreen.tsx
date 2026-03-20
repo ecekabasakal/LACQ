@@ -26,7 +26,7 @@ interface Appointment {
   notes: string;
 }
 
-const APPOINTMENTS: Appointment[] = [
+const INITIAL_APPOINTMENTS: Appointment[] = [
   { id: '1', service: 'Kalıcı Manikür', specialist: 'Ayşe Kaya', specialistTitle: 'Nail Art Uzmanı', date: '21 Mar 2026', time: '14:00', duration: '60 dk', price: '450₺', status: 'upcoming', notes: '' },
   { id: '2', service: 'Nail Art', specialist: 'Ayşe Kaya', specialistTitle: 'Nail Art Uzmanı', date: '28 Mar 2026', time: '11:00', duration: '90 dk', price: '600₺', status: 'upcoming', notes: '' },
   { id: '3', service: 'Pedikür', specialist: 'Selin Arslan', specialistTitle: 'Pedikür Uzmanı', date: '15 Mar 2026', time: '10:00', duration: '45 dk', price: '350₺', status: 'completed', notes: '' },
@@ -37,9 +37,10 @@ type TabType = 'upcoming' | 'past';
 
 export const AppointmentsScreen = () => {
   const [activeTab, setActiveTab] = useState<TabType>('upcoming');
+  const [appointments, setAppointments] = useState<Appointment[]>(INITIAL_APPOINTMENTS);
   const navigation = useNavigation<any>();
 
-  const filteredAppointments = APPOINTMENTS.filter(apt => {
+  const filteredAppointments = appointments.filter(apt => {
     if (activeTab === 'upcoming') return apt.status === 'upcoming';
     return apt.status === 'completed' || apt.status === 'cancelled';
   });
@@ -50,7 +51,15 @@ export const AppointmentsScreen = () => {
       `${apt.service} randevunuzu iptal etmek istediğinize emin misiniz?`,
       [
         { text: 'Vazgeç', style: 'cancel' },
-        { text: 'İptal Et', style: 'destructive', onPress: () => {} },
+        {
+          text: 'İptal Et',
+          style: 'destructive',
+          onPress: () => {
+            setAppointments(prev =>
+              prev.map(a => a.id === apt.id ? { ...a, status: 'cancelled' as AppointmentStatus } : a)
+            );
+          },
+        },
       ]
     );
   };
