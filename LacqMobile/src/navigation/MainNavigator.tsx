@@ -1,16 +1,21 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { View, Text, StyleSheet } from 'react-native';
 import { Colors, Typography } from '../theme/tokens';
 import { MainTabParamList } from './types';
-import { View, Text } from 'react-native';
 import { HomeScreen } from '../screens/main/HomeScreen';
+import { DiscoverScreen } from '../screens/main/DiscoverScreen';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const PlaceholderScreen = (name: string) => () => (
-  <View style={{ flex: 1, backgroundColor: Colors.background, justifyContent: 'center', alignItems: 'center' }}>
-    <Text style={{ fontFamily: Typography.fontBody, color: Colors.textPrimary }}>{name}</Text>
+  <View style={styles.placeholder}>
+    <Text style={styles.placeholderText}>{name}</Text>
   </View>
+);
+
+const TabIcon = ({ icon, focused }: { icon: string; focused: boolean }) => (
+  <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.4 }}>{icon}</Text>
 );
 
 export const MainNavigator = () => {
@@ -21,6 +26,7 @@ export const MainNavigator = () => {
         tabBarStyle: {
           backgroundColor: Colors.surface,
           borderTopColor: Colors.border,
+          borderTopWidth: 0.5,
           paddingBottom: 8,
           paddingTop: 8,
           height: 68,
@@ -29,14 +35,56 @@ export const MainNavigator = () => {
         tabBarInactiveTintColor: Colors.textTertiary,
         tabBarLabelStyle: {
           fontFamily: Typography.fontBodyMedium,
-          fontSize: 11,
+          fontSize: 10,
+          marginTop: 2,
         },
       }}
     >
-      <Tab.Screen name="Home" component={HomeScreen} options={{ title: 'Ana Sayfa' }} />
-      <Tab.Screen name="Appointments" component={PlaceholderScreen('Randevularım')} options={{ title: 'Randevularım' }} />
-      <Tab.Screen name="Discover" component={PlaceholderScreen('Keşfet')} options={{ title: 'Keşfet' }} />
-      <Tab.Screen name="Profile" component={PlaceholderScreen('Profil')} options={{ title: 'Profil' }} />
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          title: 'Ana Sayfa',
+          tabBarIcon: ({ focused }) => <TabIcon icon="🏠" focused={focused} />,
+        }}
+      />
+      <Tab.Screen
+        name="Appointments"
+        component={PlaceholderScreen('Randevularım')}
+        options={{
+          title: 'Randevularım',
+          tabBarIcon: ({ focused }) => <TabIcon icon="📅" focused={focused} />,
+        }}
+      />
+      <Tab.Screen
+        name="Discover"
+        component={DiscoverScreen}
+        options={{
+          title: 'Keşfet',
+          tabBarIcon: ({ focused }) => <TabIcon icon="🔍" focused={focused} />,
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={PlaceholderScreen('Profil')}
+        options={{
+          title: 'Profil',
+          tabBarIcon: ({ focused }) => <TabIcon icon="👤" focused={focused} />,
+        }}
+      />
     </Tab.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  placeholder: {
+    flex: 1,
+    backgroundColor: Colors.background,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  placeholderText: {
+    fontFamily: Typography.fontBody,
+    color: Colors.textPrimary,
+  },
+});
