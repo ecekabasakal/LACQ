@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,20 +6,34 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  TextInput,
 } from 'react-native';
 import { Colors, Typography, Spacing, BorderRadius, Shadow } from '../../theme/tokens';
 import { useAuthStore } from '../../store/authStore';
 
-const CATEGORIES = ['Manikür', 'Pedikür', 'Kalıcı', 'Nail Art'];
+const CATEGORIES = [
+  { label: 'Manikür', icon: '💅' },
+  { label: 'Pedikür', icon: '🦶' },
+  { label: 'Kalıcı', icon: '✨' },
+  { label: 'Nail Art', icon: '🎨' },
+  { label: 'Bakım', icon: '🌸' },
+];
 
 const SPECIALISTS = [
-  { id: '1', name: 'Ayşe Kaya', title: 'Nail Art Uzmanı', rating: '4.9', reviews: '128', initials: 'AK' },
-  { id: '2', name: 'Merve Demir', title: 'Kalıcı Uzmanı', rating: '4.8', reviews: '94', initials: 'MD' },
+  { id: '1', name: 'Ayşe Kaya', title: 'Nail Art Uzmanı', rating: '4.9', reviews: '128', icon: '👩' },
+  { id: '2', name: 'Merve Demir', title: 'Kalıcı Uzmanı', rating: '4.8', reviews: '94', icon: '👩' },
 ];
 
 export const HomeScreen = () => {
   const { user } = useAuthStore();
-  const [activeCategory, setActiveCategory] = React.useState(0);
+  const [activeCategory, setActiveCategory] = useState(0);
+  const [search, setSearch] = useState('');
+
+  const initials = user?.firstName && user?.lastName
+    ? `${user.firstName[0]}${user.lastName[0]}`
+    : 'EK';
+
+  const firstName = user?.firstName || 'Ece';
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -27,8 +41,25 @@ export const HomeScreen = () => {
 
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.greeting}>MERHABA, {user?.firstName?.toUpperCase() || 'ECE'}</Text>
-          <Text style={styles.headerTitle}>Bugün kendine iyi bak</Text>
+          <View>
+            <Text style={styles.greeting}>MERHABA, {firstName.toUpperCase()} 👋</Text>
+            <Text style={styles.headerTitle}>Bugün kendine{'\n'}iyi bak</Text>
+          </View>
+          <View style={styles.avatarCircle}>
+            <Text style={styles.avatarInitials}>{initials}</Text>
+          </View>
+        </View>
+
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <Text style={styles.searchIcon}>🔍</Text>
+          <TextInput
+            style={styles.searchInput}
+            value={search}
+            onChangeText={setSearch}
+            placeholder="Uzman veya hizmet ara..."
+            placeholderTextColor={Colors.textTertiary}
+          />
         </View>
 
         {/* Yaklaşan Randevu */}
@@ -46,18 +77,23 @@ export const HomeScreen = () => {
         {/* Kategoriler */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>KATEGORİLER</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesScroll}>
-            {CATEGORIES.map((cat, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[styles.categoryChip, activeCategory === index && styles.categoryChipActive]}
-                onPress={() => setActiveCategory(index)}
-              >
-                <Text style={[styles.categoryText, activeCategory === index && styles.categoryTextActive]}>
-                  {cat}
-                </Text>
-              </TouchableOpacity>
-            ))}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View style={styles.categoriesRow}>
+              {CATEGORIES.map((cat, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.categoryItem}
+                  onPress={() => setActiveCategory(index)}
+                >
+                  <View style={[styles.categoryIcon, activeCategory === index && styles.categoryIconActive]}>
+                    <Text style={styles.categoryEmoji}>{cat.icon}</Text>
+                  </View>
+                  <Text style={[styles.categoryLabel, activeCategory === index && styles.categoryLabelActive]}>
+                    {cat.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </ScrollView>
         </View>
 
@@ -82,8 +118,8 @@ export const HomeScreen = () => {
 
           {SPECIALISTS.map((specialist) => (
             <TouchableOpacity key={specialist.id} style={styles.specialistCard}>
-              <View style={styles.avatar}>
-                <Text style={styles.avatarText}>{specialist.initials}</Text>
+              <View style={styles.specialistAvatar}>
+                <Text style={styles.specialistEmoji}>{specialist.icon}</Text>
               </View>
               <View style={styles.specialistInfo}>
                 <Text style={styles.specialistName}>{specialist.name}</Text>
@@ -110,9 +146,13 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
+
+  // Header
   header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     paddingHorizontal: Spacing[5],
     paddingTop: Spacing[6],
     paddingBottom: Spacing[4],
@@ -126,11 +166,51 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontFamily: Typography.fontDisplayRegular,
-    fontSize: 28,
+    fontSize: 26,
+    color: Colors.textPrimary,
+    lineHeight: 32,
+  },
+  avatarCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: Colors.surfaceWarm,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.5,
+    borderColor: Colors.border,
+  },
+  avatarInitials: {
+    fontFamily: Typography.fontBodyMedium,
+    fontSize: 13,
+    color: Colors.primary,
+  },
+
+  // Search
+  searchContainer: {
+    marginHorizontal: Spacing[4],
+    marginBottom: Spacing[4],
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 0.5,
+    borderColor: Colors.border,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing[4],
+    height: 44,
+  },
+  searchIcon: {
+    fontSize: 14,
+    marginRight: Spacing[2],
+  },
+  searchInput: {
+    flex: 1,
+    fontFamily: Typography.fontBody,
+    fontSize: 14,
     color: Colors.textPrimary,
   },
 
-  // Randevu kartı
+  // Randevu
   appointmentCard: {
     marginHorizontal: Spacing[4],
     marginBottom: Spacing[5],
@@ -199,30 +279,42 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: Colors.primary,
   },
-  categoriesScroll: {
-    marginLeft: -Spacing[5],
-    paddingLeft: Spacing[5],
+  categoriesRow: {
+    flexDirection: 'row',
+    gap: Spacing[3],
+    paddingRight: Spacing[5],
   },
-  categoryChip: {
+  categoryItem: {
+    alignItems: 'center',
+    width: 60,
+  },
+  categoryIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: BorderRadius.lg,
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.full,
-    paddingHorizontal: Spacing[4],
-    paddingVertical: Spacing[2],
-    marginRight: Spacing[2],
     borderWidth: 0.5,
     borderColor: Colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing[2],
   },
-  categoryChipActive: {
+  categoryIconActive: {
     backgroundColor: Colors.primary,
     borderColor: Colors.primary,
   },
-  categoryText: {
-    fontFamily: Typography.fontBody,
-    fontSize: 13,
-    color: Colors.textPrimary,
+  categoryEmoji: {
+    fontSize: 22,
   },
-  categoryTextActive: {
-    color: Colors.surface,
+  categoryLabel: {
+    fontFamily: Typography.fontBody,
+    fontSize: 11,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+  },
+  categoryLabelActive: {
+    color: Colors.primary,
+    fontFamily: Typography.fontBodyMedium,
   },
 
   // Banner
@@ -265,7 +357,7 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
 
-  // Uzman kartları
+  // Uzmanlar
   specialistCard: {
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.xl,
@@ -277,19 +369,17 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[3],
     ...Shadow.sm,
   },
-  avatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+  specialistAvatar: {
+    width: 48,
+    height: 48,
+    borderRadius: BorderRadius.lg,
     backgroundColor: Colors.surfaceWarm,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: Spacing[3],
   },
-  avatarText: {
-    fontFamily: Typography.fontBodyMedium,
-    fontSize: 13,
-    color: Colors.textSecondary,
+  specialistEmoji: {
+    fontSize: 22,
   },
   specialistInfo: {
     flex: 1,
