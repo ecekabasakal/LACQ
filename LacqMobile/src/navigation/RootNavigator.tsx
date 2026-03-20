@@ -6,6 +6,7 @@ import { AuthNavigator } from './AuthNavigator';
 import { MainNavigator } from './MainNavigator';
 import { RootStackParamList } from './types';
 import { SpecialistDetailScreen } from '../screens/main/SpecialistDetailScreen';
+import { AppointmentDetailScreen } from '../screens/main/AppointmentDetailScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -19,6 +20,7 @@ export const RootNavigator = () => {
           <>
             <Stack.Screen name="MainTabs" component={MainNavigator} />
             <Stack.Screen name="SpecialistDetail" component={SpecialistDetailScreen} />
+            <Stack.Screen name="AppointmentDetail" component={AppointmentDetailScreen} />
           </>
         ) : (
           <Stack.Screen name="Login" component={AuthNavigator} />

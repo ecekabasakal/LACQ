@@ -4,6 +4,7 @@ export type RootStackParamList = {
   ForgotPassword: undefined;
   MainTabs: undefined;
   SpecialistDetail: { specialistId: string };
+  AppointmentDetail: { appointment: object };
 };
 
 export type MainTabParamList = {
