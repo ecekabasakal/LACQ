@@ -30,7 +30,9 @@ export const RootNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {isAuthenticated ? (
+        {!hasSeenOnboarding ? (
+          <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+        ) : isAuthenticated ? (
           <>
             <Stack.Screen name="MainTabs" component={MainNavigator} />
             <Stack.Screen name="SpecialistDetail" component={SpecialistDetailScreen} />
@@ -38,12 +40,7 @@ export const RootNavigator = () => {
             <Stack.Screen name="BookAppointment" component={BookAppointmentScreen} />
           </>
         ) : (
-          <>
-            {!hasSeenOnboarding && (
-              <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-            )}
-            <Stack.Screen name="Login" component={AuthNavigator} />
-          </>
+          <Stack.Screen name="Login" component={AuthNavigator} />
         )}
       </Stack.Navigator>
     </NavigationContainer>

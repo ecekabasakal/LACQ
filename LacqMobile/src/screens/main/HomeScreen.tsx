@@ -12,23 +12,18 @@ import {
 import { Colors, Typography, Spacing, BorderRadius, Shadow } from '../../theme/tokens';
 import { useAuthStore } from '../../store/authStore';
 
-const CATEGORIES = [
-  { label: 'Manikür', icon: '💅' },
-  { label: 'Pedikür', icon: '🦶' },
-  { label: 'Kalıcı', icon: '✨' },
-  { label: 'Nail Art', icon: '🎨' },
-  { label: 'Bakım', icon: '🌸' },
-];
+const CATEGORIES = ['Tümü', 'Manikür', 'Pedikür', 'Kalıcı', 'Nail Art', 'Bakım'];
 
-const SPECIALISTS = [
-  { id: '1', name: 'Ayşe Kaya', title: 'Nail Art Uzmanı', rating: '4.9', reviews: '128', icon: '👩' },
-  { id: '2', name: 'Merve Demir', title: 'Kalıcı Uzmanı', rating: '4.8', reviews: '94', icon: '👩' },
+const ALL_SPECIALISTS = [
+  { id: '1', name: 'Ayşe Kaya', title: 'Nail Art Uzmanı', rating: '4.9', reviews: '128', icon: '👩', categories: ['Nail Art', 'Manikür'] },
+  { id: '2', name: 'Merve Demir', title: 'Kalıcı Uzmanı', rating: '4.8', reviews: '94', icon: '👩', categories: ['Kalıcı', 'Manikür'] },
+  { id: '3', name: 'Selin Arslan', title: 'Pedikür Uzmanı', rating: '4.7', reviews: '76', icon: '👩', categories: ['Pedikür', 'Bakım'] },
 ];
 
 export const HomeScreen = () => {
   const { user } = useAuthStore();
   const navigation = useNavigation<any>();
-  const [activeCategory, setActiveCategory] = useState(0);
+  const [activeCategory, setActiveCategory] = useState('Tümü');
   const [search, setSearch] = useState('');
 
   const initials = user?.firstName && user?.lastName
@@ -36,6 +31,10 @@ export const HomeScreen = () => {
     : 'EK';
 
   const firstName = user?.firstName || 'Ece';
+
+  const filteredSpecialists = ALL_SPECIALISTS.filter(s =>
+    activeCategory === 'Tümü' || s.categories.includes(activeCategory)
+  );
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -73,21 +72,19 @@ export const HomeScreen = () => {
           </TouchableOpacity>
         </View>
 
+        {/* Kategoriler */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>KATEGORİLER</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.categoriesRow}>
-              {CATEGORIES.map((cat, index) => (
+              {CATEGORIES.map((cat) => (
                 <TouchableOpacity
-                  key={index}
-                  style={styles.categoryItem}
-                  onPress={() => setActiveCategory(index)}
+                  key={cat}
+                  style={[styles.categoryChip, activeCategory === cat && styles.categoryChipActive]}
+                  onPress={() => setActiveCategory(cat)}
                 >
-                  <View style={[styles.categoryIcon, activeCategory === index && styles.categoryIconActive]}>
-                    <Text style={styles.categoryEmoji}>{cat.icon}</Text>
-                  </View>
-                  <Text style={[styles.categoryLabel, activeCategory === index && styles.categoryLabelActive]}>
-                    {cat.label}
+                  <Text style={[styles.categoryChipText, activeCategory === cat && styles.categoryChipTextActive]}>
+                    {cat}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -112,25 +109,31 @@ export const HomeScreen = () => {
             </TouchableOpacity>
           </View>
 
-          {SPECIALISTS.map((specialist) => (
-            <TouchableOpacity
-              key={specialist.id}
-              style={styles.specialistCard}
-              onPress={() => navigation.navigate('SpecialistDetail', { specialistId: specialist.id })}
-            >
-              <View style={styles.specialistAvatar}>
-                <Text style={styles.specialistEmoji}>{specialist.icon}</Text>
-              </View>
-              <View style={styles.specialistInfo}>
-                <Text style={styles.specialistName}>{specialist.name}</Text>
-                <Text style={styles.specialistTitle}>{specialist.title}</Text>
-              </View>
-              <View style={styles.ratingContainer}>
-                <Text style={styles.rating}>⭐ {specialist.rating}</Text>
-                <Text style={styles.reviews}>{specialist.reviews} değerlendirme</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
+          {filteredSpecialists.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyText}>Bu kategoride uzman bulunamadı.</Text>
+            </View>
+          ) : (
+            filteredSpecialists.map((specialist) => (
+              <TouchableOpacity
+                key={specialist.id}
+                style={styles.specialistCard}
+                onPress={() => navigation.navigate('SpecialistDetail', { specialistId: specialist.id })}
+              >
+                <View style={styles.specialistAvatar}>
+                  <Text style={styles.specialistEmoji}>{specialist.icon}</Text>
+                </View>
+                <View style={styles.specialistInfo}>
+                  <Text style={styles.specialistName}>{specialist.name}</Text>
+                  <Text style={styles.specialistTitle}>{specialist.title}</Text>
+                </View>
+                <View style={styles.ratingContainer}>
+                  <Text style={styles.rating}>⭐ {specialist.rating}</Text>
+                  <Text style={styles.reviews}>{specialist.reviews} değerlendirme</Text>
+                </View>
+              </TouchableOpacity>
+            ))
+          )}
         </View>
 
         <View style={{ height: 20 }} />
@@ -160,13 +163,11 @@ const styles = StyleSheet.create({
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing[3] },
   sectionTitle: { fontFamily: Typography.fontBodyMedium, fontSize: 12, color: Colors.textPrimary, letterSpacing: 1, marginBottom: Spacing[3] },
   seeAll: { fontFamily: Typography.fontBody, fontSize: 12, color: Colors.primary },
-  categoriesRow: { flexDirection: 'row', gap: Spacing[3], paddingRight: Spacing[5] },
-  categoryItem: { alignItems: 'center', width: 60 },
-  categoryIcon: { width: 56, height: 56, borderRadius: BorderRadius.lg, backgroundColor: Colors.surface, borderWidth: 0.5, borderColor: Colors.border, justifyContent: 'center', alignItems: 'center', marginBottom: Spacing[2] },
-  categoryIconActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
-  categoryEmoji: { fontSize: 22 },
-  categoryLabel: { fontFamily: Typography.fontBody, fontSize: 11, color: Colors.textSecondary, textAlign: 'center' },
-  categoryLabelActive: { color: Colors.primary, fontFamily: Typography.fontBodyMedium },
+  categoriesRow: { flexDirection: 'row', gap: Spacing[2], paddingRight: Spacing[5] },
+  categoryChip: { backgroundColor: Colors.surface, borderRadius: BorderRadius.full, paddingHorizontal: Spacing[4], paddingVertical: Spacing[2], borderWidth: 0.5, borderColor: Colors.border },
+  categoryChipActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
+  categoryChipText: { fontFamily: Typography.fontBody, fontSize: 13, color: Colors.textPrimary },
+  categoryChipTextActive: { color: Colors.surface, fontFamily: Typography.fontBodyMedium },
   banner: { marginHorizontal: Spacing[4], marginBottom: Spacing[5], backgroundColor: Colors.primary, borderRadius: BorderRadius.xl, padding: Spacing[5] },
   bannerLabel: { fontFamily: Typography.fontBodyMedium, fontSize: 10, color: 'rgba(255,255,255,0.85)', letterSpacing: 1.5, marginBottom: Spacing[1] },
   bannerTitle: { fontFamily: Typography.fontBodyMedium, fontSize: 17, color: Colors.surface, marginBottom: 4 },
@@ -182,4 +183,6 @@ const styles = StyleSheet.create({
   ratingContainer: { alignItems: 'flex-end' },
   rating: { fontFamily: Typography.fontBodyMedium, fontSize: 13, color: Colors.textPrimary, marginBottom: 2 },
   reviews: { fontFamily: Typography.fontBody, fontSize: 11, color: Colors.textSecondary },
+  emptyState: { alignItems: 'center', paddingVertical: Spacing[8] },
+  emptyText: { fontFamily: Typography.fontBody, fontSize: 14, color: Colors.textSecondary },
 });

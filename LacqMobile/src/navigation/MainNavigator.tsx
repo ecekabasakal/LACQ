@@ -1,18 +1,14 @@
 import React from 'react';
-import { AppointmentsScreen } from '../screens/main/AppointmentsScreen';
-import { ProfileScreen } from '../screens/main/ProfileScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Colors, Typography } from '../theme/tokens';
-import { Text } from 'react-native';
 import { MainTabParamList } from './types';
 import { HomeScreen } from '../screens/main/HomeScreen';
 import { DiscoverScreen } from '../screens/main/DiscoverScreen';
+import { AppointmentsScreen } from '../screens/main/AppointmentsScreen';
+import { ProfileScreen } from '../screens/main/ProfileScreen';
+import { Home, Calendar, Search, User } from 'lucide-react-native';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
-
-const TabIcon = ({ icon, focused }: { icon: string; focused: boolean }) => (
-  <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.4 }}>{icon}</Text>
-);
 
 export const MainNavigator = () => {
   return (
@@ -41,7 +37,7 @@ export const MainNavigator = () => {
         component={HomeScreen}
         options={{
           title: 'Ana Sayfa',
-          tabBarIcon: ({ focused }) => <TabIcon icon="🏠" focused={focused} />,
+          tabBarIcon: ({ color, size }) => <Home color={color} size={size} strokeWidth={1.5} />,
         }}
       />
       <Tab.Screen
@@ -49,7 +45,7 @@ export const MainNavigator = () => {
         component={AppointmentsScreen}
         options={{
           title: 'Randevularım',
-          tabBarIcon: ({ focused }) => <TabIcon icon="📅" focused={focused} />,
+          tabBarIcon: ({ color, size }) => <Calendar color={color} size={size} strokeWidth={1.5} />,
         }}
       />
       <Tab.Screen
@@ -57,7 +53,7 @@ export const MainNavigator = () => {
         component={DiscoverScreen}
         options={{
           title: 'Keşfet',
-          tabBarIcon: ({ focused }) => <TabIcon icon="🔍" focused={focused} />,
+          tabBarIcon: ({ color, size }) => <Search color={color} size={size} strokeWidth={1.5} />,
         }}
       />
       <Tab.Screen
@@ -65,10 +61,9 @@ export const MainNavigator = () => {
         component={ProfileScreen}
         options={{
           title: 'Profil',
-          tabBarIcon: ({ focused }) => <TabIcon icon="👤" focused={focused} />,
+          tabBarIcon: ({ color, size }) => <User color={color} size={size} strokeWidth={1.5} />,
         }}
       />
     </Tab.Navigator>
   );
 };
-
