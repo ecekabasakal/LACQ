@@ -27,19 +27,19 @@ export const LoginScreen = ({ navigation }: Props) => {
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
 
-  const { login, isLoading, error, clearError } = useAuthStore();
-
+const { login, isLoading, clearError } = useAuthStore();
   const handleLogin = async () => {
-    if (!email.trim() || !password.trim()) {
-      Alert.alert('Uyarı', 'Lütfen tüm alanları doldurun.');
-      return;
-    }
-    clearError();
-    await login(email.trim().toLowerCase(), password);
-    if (error) {
-      Alert.alert('Hata', error);
-    }
-  };
+  if (!email.trim() || !password.trim()) {
+    Alert.alert('Uyarı', 'Lütfen tüm alanları doldurun.');
+    return;
+  }
+  clearError();
+  await login(email.trim().toLowerCase(), password);
+  const currentError = useAuthStore.getState().error;
+  if (currentError) {
+    Alert.alert('Hata', currentError);
+  }
+};
 
   return (
     <KeyboardAvoidingView
