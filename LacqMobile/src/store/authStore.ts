@@ -1,12 +1,6 @@
-// src/store/authStore.ts
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// ============================================================
-// Kurulum (terminal'de):
-// npm install zustand @react-native-async-storage/async-storage
-// ============================================================
 
 interface User {
   id: string;
@@ -22,8 +16,6 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-
-  // Actions
   login: (email: string, password: string) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
   logout: () => void;
@@ -38,10 +30,7 @@ interface RegisterData {
   phone?: string;
 }
 
-const API_URL = 'http://localhost:5106/api'; // Geliştirme ortamı
-// iOS Simulator için: http://localhost:5001
-// Android Emulator için: http://10.0.2.2:5001
-// Fiziksel cihaz için: bilgisayarının IP adresi (ör. http://192.168.1.x:5001)
+const API_URL = 'http://localhost:5106/api';
 
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -68,17 +57,17 @@ export const useAuthStore = create<AuthState>()(
           }
 
           set({
-  user: {
-    id: data.userId,
-    email: email,
-    firstName: '',
-    lastName: '',
-    role: data.role === 0 ? 'Client' : data.role === 1 ? 'Specialist' : 'Admin',
-  },
-  token: data.token,
-  isAuthenticated: true,
-  isLoading: false,
-});
+            user: {
+              id: data.userId,
+              email: email,
+              firstName: '',
+              lastName: '',
+              role: data.role === 0 ? 'Client' : data.role === 1 ? 'Specialist' : 'Admin',
+            },
+            token: data.token,
+            isAuthenticated: true,
+            isLoading: false,
+          });
         } catch (error: any) {
           set({
             error: error.message || 'Bir hata oluştu',
@@ -93,7 +82,15 @@ export const useAuthStore = create<AuthState>()(
           const response = await fetch(`${API_URL}/auth/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
+            body: JSON.stringify({
+              firstName: data.firstName,
+              lastName: data.lastName,
+              fullName: `${data.firstName} ${data.lastName}`,
+              email: data.email,
+              password: data.password,
+              phoneNumber: data.phone || '05000000000',
+              role: 0,
+            }),
           });
 
           const result = await response.json();
@@ -103,7 +100,13 @@ export const useAuthStore = create<AuthState>()(
           }
 
           set({
-            user: result.user,
+            user: {
+              id: result.userId,
+              email: data.email,
+              firstName: data.firstName,
+              lastName: data.lastName,
+              role: 'Client',
+            },
             token: result.token,
             isAuthenticated: true,
             isLoading: false,
@@ -129,7 +132,6 @@ export const useAuthStore = create<AuthState>()(
     {
       name: 'lacq-auth',
       storage: createJSONStorage(() => AsyncStorage),
-      // Sadece bu field'ları persist et
       partialize: (state) => ({
         user: state.user,
         token: state.token,

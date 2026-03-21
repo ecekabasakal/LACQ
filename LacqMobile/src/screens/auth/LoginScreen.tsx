@@ -121,7 +121,7 @@ export const LoginScreen = ({ navigation }: Props) => {
             <View style={styles.dividerLine} />
           </View>
 
-          <TouchableOpacity style={styles.registerButton} onPress={() => navigation.navigate('Register')} activeOpacity={0.7}>
+          <TouchableOpacity style={styles.registerButton} onPress={() => navigation.navigate('RegisterScreen')} activeOpacity={0.7}>
             <Text style={styles.registerButtonText}>Hesap Oluştur</Text>
           </TouchableOpacity>
         </View>
