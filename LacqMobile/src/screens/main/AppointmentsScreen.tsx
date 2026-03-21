@@ -10,35 +10,14 @@ import {
   Alert,
 } from 'react-native';
 import { Colors, Typography, Spacing, BorderRadius, Shadow } from '../../theme/tokens';
-
-type AppointmentStatus = 'upcoming' | 'completed' | 'cancelled';
-
-interface Appointment {
-  id: string;
-  service: string;
-  specialist: string;
-  specialistTitle: string;
-  date: string;
-  time: string;
-  duration: string;
-  price: string;
-  status: AppointmentStatus;
-  notes: string;
-}
-
-const INITIAL_APPOINTMENTS: Appointment[] = [
-  { id: '1', service: 'Kalıcı Manikür', specialist: 'Ayşe Kaya', specialistTitle: 'Nail Art Uzmanı', date: '21 Mar 2026', time: '14:00', duration: '60 dk', price: '450₺', status: 'upcoming', notes: '' },
-  { id: '2', service: 'Nail Art', specialist: 'Ayşe Kaya', specialistTitle: 'Nail Art Uzmanı', date: '28 Mar 2026', time: '11:00', duration: '90 dk', price: '600₺', status: 'upcoming', notes: '' },
-  { id: '3', service: 'Pedikür', specialist: 'Selin Arslan', specialistTitle: 'Pedikür Uzmanı', date: '15 Mar 2026', time: '10:00', duration: '45 dk', price: '350₺', status: 'completed', notes: '' },
-  { id: '4', service: 'Manikür', specialist: 'Merve Demir', specialistTitle: 'Kalıcı Uzmanı', date: '1 Mar 2026', time: '13:00', duration: '45 dk', price: '300₺', status: 'cancelled', notes: '' },
-];
+import { useAppointmentStore, Appointment } from '../../store/appointmentStore';
 
 type TabType = 'upcoming' | 'past';
 
 export const AppointmentsScreen = () => {
   const [activeTab, setActiveTab] = useState<TabType>('upcoming');
-  const [appointments, setAppointments] = useState<Appointment[]>(INITIAL_APPOINTMENTS);
   const navigation = useNavigation<any>();
+  const { appointments, cancelAppointment } = useAppointmentStore();
 
   const filteredAppointments = appointments.filter(apt => {
     if (activeTab === 'upcoming') return apt.status === 'upcoming';
@@ -54,17 +33,13 @@ export const AppointmentsScreen = () => {
         {
           text: 'İptal Et',
           style: 'destructive',
-          onPress: () => {
-            setAppointments(prev =>
-              prev.map(a => a.id === apt.id ? { ...a, status: 'cancelled' as AppointmentStatus } : a)
-            );
-          },
+          onPress: () => cancelAppointment(apt.id),
         },
       ]
     );
   };
 
-  const getStatusBadge = (status: AppointmentStatus) => {
+  const getStatusBadge = (status: Appointment['status']) => {
     switch (status) {
       case 'upcoming': return { bg: '#faeeda', text: '#854f0b', label: 'Yaklaşan' };
       case 'completed': return { bg: '#eaf3de', text: '#3b6d11', label: 'Tamamlandı' };
